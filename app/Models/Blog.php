@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Blog extends Model
 {
-    protected $fillable = ['title', 'description', 'category_id', 'user_id'];
+    protected $fillable = ['title', 'description', 'category_id', 'user_id', 'image'];
 
     //One blog belongs to one category
     public function category()
