@@ -13,7 +13,7 @@ class BlogController extends Controller
     {
         $query = Blog::with(['category', 'user']);
 
-        // 🔍 Search by keyword in title, description, or user name
+        //  Search by keyword in title, description, or user name
         if ($request->filled('keyword')) {
             $keyword = $request->keyword;
             $query->where(function ($q) use ($keyword) {
@@ -23,23 +23,26 @@ class BlogController extends Controller
             });
         }
 
-        // 🎯 Filter by category
+        //  Filter by category
         if ($request->filled('category_id')) {
             $query->where('category_id', $request->category_id);
         }
 
-        // 🎯 Filter by user
+        //  Filter by user
         if ($request->filled('user_id')) {
             $query->where('user_id', $request->user_id);
         }
 
-        // 🎯 Filter by date (YYYY-MM-DD)
+        //  Filter by date (YYYY-MM-DD)
         if ($request->filled('date')) {
             $query->whereDate('created_at', $request->date);
         }
 
-        // 📌 Paginate results
-        $blogs = $query->latest()->paginate($request->get('per_page', 10));
+        // Paginate results
+        $blogs = $query
+            ->withCount('comments', 'likes')
+            ->latest()
+            ->paginate($request->get('per_page', 10));
 
         return response()->json($blogs, 200);
     }
@@ -75,7 +78,9 @@ class BlogController extends Controller
     // Show single blog with relations
     public function show(Blog $blog)
     {
-        $blog->load(['category', 'user']);
+        $blog
+            ->load(['category', 'user'])
+            ->loadCount('comments', 'likes');
         return response()->json($blog, 200);
     }
 

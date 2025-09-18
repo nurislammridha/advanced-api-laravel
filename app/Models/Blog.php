@@ -19,4 +19,14 @@ class Blog extends Model
     {
         return $this->belongsTo(User::class);
     }
+    //One blog has many comments
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+    //One blog has many likes
+    public function likes()
+    {
+        return $this->hasMany(Like::class);
+    }
 }
